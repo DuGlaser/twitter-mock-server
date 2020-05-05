@@ -5,7 +5,6 @@ module V1
       desc "returns all users"
       get "/" do
         @users = User.all
-        status 201
         present @users, with: V1::Entities::UserEntity
       end
 
@@ -39,7 +38,6 @@ module V1
         @user = User.find_by(email: params[:email])
         if @user.authenticate(params[:password])
           set_cookie(@user)
-          status 201
           present @user, with: V1::Entities::UserEntity
         else
           error!("Unauthorized. Invalid email or password.", 401)
@@ -53,7 +51,6 @@ module V1
       end
       get "/:id" do
         @user = User.find(params[:id])
-        status 201
         present @user, with: V1::Entities::UserEntity
       end
 
@@ -66,10 +63,9 @@ module V1
       patch "/:id" do
         @user = User.find_by("id": params[:id])
         if @user.authenticated?(cookies[:remember_token])
-          @user.name = params[:name] if params[:content].present?
+          @user.name = params[:name] if params[:name].present?
           @user.bio = params[:bio] if params[:bio].present?
           if (@user.save)
-            status 201
             present @user, with: V1::Entities::UserEntity
           end
         else
@@ -85,9 +81,7 @@ module V1
       delete "/:id" do
         @user = User.find_by("id": params[:id])
         if @user.authenticated?(cookies[:remember_token])
-          @user = User.find(cookies[:id])
           @user.destroy
-          status 201
           present @user, with: V1::Entities::UserEntity
         else
           error!("permission denied", 401)
