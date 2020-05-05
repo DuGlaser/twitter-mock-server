@@ -77,4 +77,25 @@ describe "users api", :type => :request do
     expect(body["bio"]).to eq("test bio")
     expect(body["name"]).to eq("hugahuga")
   end
+
+  it "should not to delete & patch other user" do
+    User.create(name: "hogehoge",
+                email: "test@bpsinc.jp",
+                password: "hogehoge")
+    User.create(name: "hugahuga",
+                email: "test2@bpsinc.jp",
+                password: "hogehoge")
+    post "/v1/users/login", params: { email: "test@bpsinc.jp",
+                                      password: "hogehoge" }
+    delete "/v1/users/2"
+    body = JSON.parse(response.body)
+    expect(response.status).to eq 401
+    expect(body["error"]).to eq("permission denied")
+
+    patch "/v1/users/2", params: { bio: "test bio",
+                                   name: "hugahuga" }
+    body = JSON.parse(response.body)
+    expect(response.status).to eq 401
+    expect(body["error"]).to eq("permission denied")
+  end
 end
