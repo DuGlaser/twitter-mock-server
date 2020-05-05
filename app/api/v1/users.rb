@@ -16,7 +16,7 @@ module V1
         @user = User.find(params[:id])
       end
 
-      # POST[/]
+      # POST[/singup]
       desc "Create an User"
       params do
         requires :name, type: String
@@ -32,6 +32,21 @@ module V1
           @user
         else
           @user.errors.full_messages
+        end
+      end
+
+      # POST[/login]
+      desc "login"
+      params do
+        requires :email, type: String
+        requires :password, type: String
+      end
+      post "/login" do
+        @user = User.find_by(email: params[:email])
+        if @user.authenticate(params[:password])
+          @user
+        else
+          error!("Unauthorized. Invalid email or password.", 401)
         end
       end
 
