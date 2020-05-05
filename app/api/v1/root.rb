@@ -6,14 +6,10 @@ module V1
     TOKEN_PREFIX = /^Bearer\s/
     TOKEN_REGEX = /^Bearer\s(.+)/
     helpers do
-      def authenticate!
-        error!("Unauthorized. Invalid or expired token.", 401) unless current_user
-      end
-
-      def current_user
-        return nil unless headers["Authorization"] && headers["Authorization"].match(TOKEN_REGEX)
-        token = headers["Authorization"].gsub(TOKEN_PREFIX, "")
-        User.find_by(token: token)
+      def set_cookie(user)
+        user.remember
+        cookies[:user_id] = user.id
+        cookies[:remember_token] = user.remember_token
       end
     end
 

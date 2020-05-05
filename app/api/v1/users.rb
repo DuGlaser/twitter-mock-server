@@ -23,7 +23,7 @@ module V1
         requires :email, type: String
         requires :password, type: String
       end
-      post "/singup" do
+      post "/signup" do
         @user = User.create(
           declared(params)
         )
@@ -44,7 +44,8 @@ module V1
       post "/login" do
         @user = User.find_by(email: params[:email])
         if @user.authenticate(params[:password])
-          @user
+          set_cookie(@user)
+          return @user
         else
           error!("Unauthorized. Invalid email or password.", 401)
         end
@@ -56,8 +57,13 @@ module V1
         requires :id, type: Integer
       end
       delete "/:id" do
-        @user = User.find(params[:id])
-        @user.destroy
+        @user = User.find(cookies[:user_id])
+        if @user.authenticated?(cookies[:remember_token]) && params[:id] == cookies[:user_id]
+          @user = User.find(cookies[:id])
+          @user.destroy
+        else
+          error!("permission denied", 401)
+        end
       end
     end
   end
