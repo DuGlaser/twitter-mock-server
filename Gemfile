@@ -15,9 +15,12 @@ gem 'puma', '~> 3.11'
 # gem 'redis', '~> 4.0'
 # Use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1.7'
+gem 'faker',  '1.7.3'
 gem 'rack-cors'
 gem 'grape'
 gem 'grape-entity'
+gem 'carrierwave', '1.2.2'
+gem 'mini_magick', '4.7.0'
 
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
