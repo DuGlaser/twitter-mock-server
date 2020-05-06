@@ -8,6 +8,12 @@ module V1
         user.remember
         cookies[:user_id] = { value: user.id, path: "/v1" }
         cookies[:remember_token] = { value: user.remember_token, path: "/v1" }
+        @current_user = user
+      end
+
+      def current_user
+        user_id = cookies[:user_id]
+        User.find_by(id: user_id)
       end
     end
 

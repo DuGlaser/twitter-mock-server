@@ -54,6 +54,10 @@ class User < ApplicationRecord
   end
 
   def following?(other_user)
-    following.include?(other_user)
+    if other_user.id == self.id
+      return nil
+    else
+      following.include?(other_user)
+    end
   end
 end
