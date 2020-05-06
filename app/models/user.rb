@@ -2,7 +2,7 @@ class User < ApplicationRecord
   attr_accessor :remember_token
   has_secure_password
 
-  has_many :tweets
+  has_many :tweets, dependent: :destroy
 
   validates :name, presence: true, length: { maximum: 50 }
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
