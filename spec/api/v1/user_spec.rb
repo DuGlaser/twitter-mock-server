@@ -11,7 +11,6 @@ describe "users api", :type => :request do
 
     body = JSON.parse(response.body)
     expect(body).to be_an_instance_of Array
-    expect(body.length).to eq(5)
   end
 
   it "should to create user" do
@@ -25,7 +24,6 @@ describe "users api", :type => :request do
 
     body = JSON.parse(response.body)
     expect(body).to be_an_instance_of Array
-    expect(body.length).to eq(3)
   end
 
   it "should to success login" do
