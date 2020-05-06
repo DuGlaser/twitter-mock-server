@@ -1,7 +1,7 @@
 module V1
   class Tweets < Grape::API
     resources :tweets do
-      # GET[/]
+      # GET[/:id]
       desc "returns all users"
       params do
         requires :id, type: Integer
@@ -11,6 +11,19 @@ module V1
         @tweets = @user.tweets
       end
 
+      # GET[/:id/feed]
+      desc "returns all users"
+      params do
+        requires :id, type: Integer
+      end
+      get "/:id/feed" do
+        following_ids = "SELECT followed_id FROM relationships
+                     WHERE follower_id = :user_id"
+        @tweets = Tweet.where("user_id IN (#{following_ids})
+                     OR user_id = :user_id", user_id: params[:id])
+      end
+
+      # POST[/:id/create]
       desc "create tweet"
       params do
         requires :content, type: String
@@ -25,6 +38,7 @@ module V1
         end
       end
 
+      # DELETE[/:id/delete]
       desc "delete tweet"
       params do
         requires :id, type: Integer

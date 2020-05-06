@@ -51,7 +51,13 @@ module V1
       end
       get "/:id" do
         @user = User.find(params[:id])
-        present @user, with: V1::Entities::UserEntity
+        return {
+                 id: @user.id,
+                 name: @user.name, bio: @user.bio,
+                 following: @user.following.count,
+                 followed: @user.followers.count,
+                 isfollowed: current_user.following?(@user),
+               }
       end
 
       # patch[/:id]
@@ -86,6 +92,56 @@ module V1
         else
           error!("permission denied", 401)
         end
+      end
+
+      # GET[/:id/follow]
+      desc "follow user"
+      params do
+        requires :id, type: Integer
+      end
+      get "/:id/follow" do
+        if current_user.authenticated?(cookies[:remember_token])
+          @user = User.find_by(id: params[:id])
+          current_user.follow(@user)
+        else
+          error!("permission denied", 401)
+        end
+      end
+
+      # GET[/:id/unfollow]
+      desc "unfollow user"
+      params do
+        requires :id, type: Integer
+      end
+      get "/:id/unfollow" do
+        if current_user.authenticated?(cookies[:remember_token])
+          @user = User.find_by(id: params[:id])
+          current_user.unfollow(@user)
+        else
+          error!("permission denied", 401)
+        end
+      end
+
+      # GET[/:id/following]
+      desc "follow user"
+      params do
+        requires :id, type: Integer
+      end
+      get "/:id/following" do
+        following_list = []
+        @users = current_user.following
+        present @users, with: V1::Entities::UserEntity
+      end
+
+      # GET[/:id/followers]
+      desc "unfollow user"
+      params do
+        requires :id, type: Integer
+      end
+      get "/:id/followers" do
+        follower_list = []
+        @users = current_user.followers
+        present @users, with: V1::Entities::UserEntity
       end
     end
   end
